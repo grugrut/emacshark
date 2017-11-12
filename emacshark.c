@@ -11,6 +11,27 @@ char filter_exp[] = "";
 bpf_u_int32 mask;
 bpf_u_int32 net;
 
+struct sniff_ethernet {
+  u_char ether_dhost[6];
+  u_char ether_shost[6];
+  u_short ether_type;
+};
+
+struct sniff_ip {
+  u_char ip_vhl;
+  u_char ip_tos;
+  u_short ip_len;
+  u_short ip_id;
+  u_short ip_off;
+  u_char ip_tol;
+  u_char ip_protocol;
+  u_short ip_chksum;
+  u_char ip_src[4];
+  u_char ip_dst[4];
+};
+
+#define SIZE_ETHERNET 14
+
 static emacs_value
 Femacshark_init(emacs_env *env, ptrdiff_t nargs, emacs_value args[], void *data)
 {
@@ -45,12 +66,27 @@ Femacshark_init(emacs_env *env, ptrdiff_t nargs, emacs_value args[], void *data)
 static emacs_value
 Femacshark_get (emacs_env *env, ptrdiff_t nargs, emacs_value args[], void *data)
 {
-  struct pcap_t *handle = env->get_user_ptr(env, args[0]);
   struct pcap_pkthdr header;
   const u_char *packet;
+  const struct sniff_ip *ip;
+  pcap_t *handle = env->get_user_ptr(env, args[0]);
+  if (env->non_local_exit_check(env) != emacs_funcall_exit_return) {
+    return env->intern(env, "nil");
+  }
 
   packet = pcap_next(handle, &header);
-  return env->make_integer(env, header.len);
+  if (header.len == 0) {
+    return env->intern(env, "nil");
+  }
+  ip = (struct sniff_ip*)(packet + SIZE_ETHERNET);
+
+  char str[40];
+  int len = sprintf(str, "%d.%d.%d.%d -> %d.%d.%d.%d",
+                    (ip)->ip_src[0], (ip)->ip_src[1],(ip)->ip_src[2],(ip)->ip_src[3],
+                      (ip)->ip_dst[0], (ip)->ip_dst[1],(ip)->ip_dst[2],(ip)->ip_dst[3]);
+
+  return env->make_string(env, str, len);
+
 }
 
 static emacs_value
