@@ -1,0 +1,9 @@
+* emacshark
+emacs25で追加されたdynamic moduleを使って、emacs上でパケットキャプチャすることができます。
+現状はsrcとdstのIPアドレスを表示するのみ。
+
+パケットキャプチャするのでemacsをroot権限で起動する必要があります。
+たぶんMakefileいじってwindows用にビルドするようにすれば、windowsでも動くはずですが試してないです。
+
+詳細は[[http://grugrut.hatenablog.jp/entry/2017/12/04/000440]]
+

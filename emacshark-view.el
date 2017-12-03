@@ -45,6 +45,7 @@
                                                (with-current-buffer (get-buffer-create "*emacshark*")
                                                  (let ((packet (emacshark-get emacshark)))
                                                    (when packet
+                                                     (goto-char (1- (point-max)))
                                                      (insert (format "%s\n" packet)))))))))))
 
 (defun emacshark--stop ()

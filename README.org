@@ -1,0 +1,6 @@
+* emacshark
+The packet sniffer on emacs with dynamic module.
+This code is available in emacs 25 or later.
+
+** Details
+[[README_ja.org]]
