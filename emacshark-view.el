@@ -41,11 +41,11 @@
     (setf emacshark (emacshark-init))
     (unless emacshark-timer
       (add-hook 'kill-buffer-hook #'emacshark--stop :local)
-      emacshark-timer (run-at-time 1 1 (lambda ()
-                                         (with-current-buffer (get-buffer-create "*emacshark*")
-                                           (let ((packet (emacshark-get emacshark)))
-                                             (when packet
-                                               (insert (format "%s\n" packet))))))))))
+      (setq emacshark-timer (run-at-time 1 1 (lambda ()
+                                               (with-current-buffer (get-buffer-create "*emacshark*")
+                                                 (let ((packet (emacshark-get emacshark)))
+                                                   (when packet
+                                                     (insert (format "%s\n" packet)))))))))))
 
 (defun emacshark--stop ()
   ""
